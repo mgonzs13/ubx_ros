@@ -19,13 +19,26 @@ class UbxNode(Node):
         super().__init__("ubx_node")
 
         # params
-        device = self.declare_parameter("device", "/dev/ttyACM0").value
-        baud_rate = self.declare_parameter("baud", 9600).value
-        self.use_nav = self.declare_parameter("use_nav", True).value
+        self.declare_parameter("update_rate", 30)
+        update_rate = self.get_parameter(
+            "update_rate").get_parameter_value().integer_value
+
+        self.declare_parameter("device", "/dev/ttyACM0")
+        device = self.get_parameter(
+            "device").get_parameter_value().string_value
+
+        self.declare_parameter("baud", 9600).value
+        baud_rate = self.get_parameter(
+            "baud").get_parameter_value().integer_value
+
+        self.declare_parameter("use_nav", True).value
+        self.use_nav = self.get_parameter(
+            "use_nav").get_parameter_value().bool_value
 
         # serial
         self.serial = Serial(device, baud_rate, timeout=5)
         self.ubr = UBXReader(self.serial)
+        self.set_rate(update_rate)
         self.config()
 
         # pubs
@@ -65,6 +78,14 @@ class UbxNode(Node):
         self.enable_msgs(0x01, 0x01, enable=self.use_nav)  # NAV-POSECEF
         self.enable_msgs(0x01, 0x3c, enable=self.use_nav)  # NAV-RELPOSNED
         self.enable_msgs(0x01, 0x07, enable=self.use_nav)  # NAV-PVT
+
+    def set_rate(self, update_rate: int) -> None:
+        cfg_msg = UBXMessage(
+            0x06, 0x08, SET,
+            measRate=int(1000 / update_rate),  # measurement rate in Hz
+            navRate=1  # in number of measurement cycles
+        )
+        self.serial.write(cfg_msg.serialize())
 
     def enable_msgs(self, msg_class: int, msg_id: int, enable: bool = True) -> None:
         cfg_msg = UBXMessage(

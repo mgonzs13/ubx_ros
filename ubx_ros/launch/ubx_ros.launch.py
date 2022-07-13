@@ -8,6 +8,12 @@ from launch.actions import DeclareLaunchArgument
 
 def generate_launch_description():
 
+    update_rate = LaunchConfiguration("update_rate")
+    update_rate_cmd = DeclareLaunchArgument(
+        "update_rate",
+        default_value="30",
+        description="update rate")
+
     device = LaunchConfiguration("device")
     device_cmd = DeclareLaunchArgument(
         "device",
@@ -33,16 +39,17 @@ def generate_launch_description():
         description="Wheter to use NAV messages from UBX protocol")
 
     ubx_node = Node(package="ubx_ros",
-                            executable="ubx_node",
-                            output="both",
-                            parameters=[
-                                {
-                                    "device": device,
-                                    "baud": baud,
-                                    "frame_id": frame_id,
-                                    "use_nav": use_nav
-                                }
-                            ]
+                    executable="ubx_node",
+                    output="both",
+                    parameters=[
+                        {
+                            "update_rate": update_rate,
+                            "device": device,
+                            "baud": baud,
+                            "frame_id": frame_id,
+                            "use_nav": use_nav
+                        }
+                    ]
                     )
 
     ntrip_client_node = Node(
@@ -70,6 +77,7 @@ def generate_launch_description():
 
     ld = LaunchDescription()
 
+    ld.add_action(update_rate_cmd)
     ld.add_action(device_cmd)
     ld.add_action(baud_cmd)
     ld.add_action(frame_id_cmd)
