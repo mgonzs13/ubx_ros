@@ -3,7 +3,7 @@
 ## Dependencies
 
 ```shell
-pip3 install pyubx2
+pip3 install pyubx2 transforms3d
 rosdep install --from-paths src -r -y
 ```
 
