@@ -50,7 +50,7 @@ class UbxNode(Node):
 
         # subs
         self.rtcm_sub = self.create_subscription(
-            RTCM, "rtcm", self.rtcm_cb, 10)
+            RTCM, "gps/rtcm", self.rtcm_cb, 10)
 
         # wall timer
         self.lista = []

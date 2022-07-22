@@ -16,11 +16,11 @@ class GpsPub(ABC):
 
         self.frame_id = self.node.declare_parameter("frame_id", "gps").value
 
-        self.nmea_pub = self.node.create_publisher(Sentence, "nmea", 10)
-        self.fix_pub = self.node.create_publisher(NavSatFix, "fix", 10)
+        self.nmea_pub = self.node.create_publisher(Sentence, "gps/nmea", 10)
+        self.fix_pub = self.node.create_publisher(NavSatFix, "gps/fix", 10)
         self.vel_pub = self.node.create_publisher(
-            TwistWithCovarianceStamped, "fix_velocity", 10)
-        self.heading_pub = self.node.create_publisher(Imu, "heading", 10)
+            TwistWithCovarianceStamped, "gps/fix_velocity", 10)
+        self.heading_pub = self.node.create_publisher(Imu, "gps/heading", 10)
 
     def work(self, raw_data: str, parsed_data: UBXMessage) -> None:
 
