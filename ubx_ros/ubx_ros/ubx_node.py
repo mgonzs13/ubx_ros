@@ -61,15 +61,17 @@ class UbxNode(Node):
                              posFilt=1, mskPosFilt=0, timeFilt=0, dateFilt=0, gpsOnlyFilter=0, trackFilt=0,
                              compat=0, consider=0, limit82=0, highPrec=1,
                              gps=0, sbas=0, galileo=0, qzss=0, glonass=0, beidou=0,
-                             svNumbering=0, nmeaVersion=3, numSV=0,
+                             svNumbering=1, nmeaVersion=0x4b, numSV=0,
                              mainTalkerId=0, gsvTalkerId=0, bdsTalkerId=b'',
                              version=0, reserved1=0)
         self.serial.write(cfg_msg.serialize())
 
         # enabling msgs
         self.enable_msgs(0xf0, 0x07, enable=(not self.use_nav))  # GNGST
+        self.enable_msgs(0xf0, 0x05, enable=(not self.use_nav))  # GNVTG
         self.enable_msgs(0xf0, 0x0e, enable=(not self.use_nav))  # GNTHS
-        self.enable_msgs(0xf0, 0xa0, enable=(not self.use_nav))  # GPDTM
+        self.enable_msgs(0xf0, 0x0a, enable=(not self.use_nav))  # GPDTM
+        self.enable_msgs(0xf0, 0x0d, enable=(not self.use_nav))  # GNS
 
         self.enable_msgs(0x0a, 0x09, enable=self.use_nav)  # MON-HW
         self.enable_msgs(0x01, 0x35, enable=self.use_nav)  # NAV-SAT
