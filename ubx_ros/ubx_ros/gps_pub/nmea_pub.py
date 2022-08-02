@@ -44,7 +44,7 @@ class NmeaPub(GpsPub):
             fix_position.status.service = NavSatStatus.SERVICE_GPS
             fix_position.status.status = gps_qual[1]
 
-            if fix_position.status.status > 0:
+            if fix_position.status.status >= 0:
                 self.valid_fix = True
             else:
                 self.valid_fix = False
@@ -84,7 +84,7 @@ class NmeaPub(GpsPub):
                 current_vel.header.stamp = stamp
 
                 current_vel.twist.twist.linear.x = float(parsed_data.sogk) * \
-                    math.sin(parsed_data.cogt) * KH_2_MS
+                    math.sin(float(parsed_data.cogt)) * KH_2_MS
                 current_vel.twist.twist.linear.y = float(parsed_data.sogk) * \
-                    math.cos(parsed_data.cogt) * KH_2_MS
+                    math.cos(float(parsed_data.cogt)) * KH_2_MS
                 self.vel_pub.publish(current_vel)
